@@ -1,0 +1,340 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+
+int main(){
+  srand(time(NULL));
+  // - - - variaveis - - -
+  int i, j, escolha, numeromovimentos, finalizar;
+  char nomejogador[100], c, mov;
+  FILE *file;
+  struct matriz {
+    char principal[9][9];
+    char debug[9][9];
+  } matriz;
+
+  for (i = 1; i < 9; i++){      // preenchendo matriz com lixo
+    for (j = 1; j < 9; j++){
+      matriz.debug [i][j] = '-';
+      matriz.principal [i][j] = '-';
+    }
+  }
+  for (j = 0; j < 9; j++){
+    i = 0;
+    matriz.debug [i][j] = '*';
+    matriz.principal [i][j] = '*';
+  } for (i = 0; i < 9; i++){
+      j = 0;
+      matriz.debug [i][j] = '*';
+      matriz.principal [i][j] = '*';
+    }
+  
+  int p1x = rand()%9 + 1; int p1y = rand()%9 + 1;   
+  int p2x = rand()%9 + 1; int p2y = rand()%9 + 1; 
+  int p3x = rand()%9 + 1; int p3y = rand()%9 + 1; 
+  int mx = rand()%9 + 1; int my = rand()%9 + 1;
+  int ox = rand()%9 + 1; int oy = rand()%9 +1; 
+  int ax = 1; ; int ay = 1;
+  if (mx == ox && my == oy){
+    mx = rand()%9 + 1;
+    my = rand()%9 + 1;
+  }
+  matriz.debug [p1x][p1y] = 'P';  //jogo pode ser facil = 0 pocos
+  matriz.debug [p2x][p2y] = 'P';
+  matriz.debug [p3x][p3y] = 'P';  //jogo pode ser dificil = 3 pocos - randomicamente
+  matriz.debug [mx][my] = 'M';    
+  matriz.debug [ox][oy] = 'O';
+  matriz.debug [1][1] = 'A';
+  matriz.principal [1][1] = 'A'; 
+  ax = 1; ay = 1;
+  
+  printf("\n***  BEM VINDO AO JOGO ***\n");
+  printf("**************************\n*");
+  printf("*  ESCOLHA UMA DAS OPCOES \n*");
+  printf("*  1. Jogar               \n*");
+  printf("*  2. Debug               \n*");
+  printf("*  3. Lista de Jogadores  \n*");
+  printf("*  4. Sair                \n*");
+  printf("**************************\n-> ");
+  scanf("%d", &escolha);
+
+                     // - - - JOGO - - -  
+  switch (escolha) {
+    case 1: 
+      printf("Escreva seu nome:  ");
+      scanf("%s", nomejogador); 
+      int dx = ox - 1; // distancia do ouro para o agente
+      int dy = oy - 1;
+      for (i = 1; i<9; i++){
+        printf("\n");
+        for (j = 1; j< 9; j++){
+          printf (" %c ", matriz.principal[i][j]);
+        }
+      }
+      printf("\n---------------------------------------------\n");
+      printf ("O ouro esta a:\n %d unidades na horizontal a direita e\n %d unidades na vertical para baixo de distancia", dx, dy);
+      printf("\n---------------------------------------------\n");
+      printf("\nEscolha uma direcao para andar com o agente");
+      printf("\n W  = andar para cima\n A  = andar para esquerda\n S  = andar para baixo\n D  = andar para direita \n -> ");
+      
+      scanf("%s", &mov);
+      int guarda;
+       if (mov == 'w'){
+          guarda = ax;
+          ax = ax - 1;
+          matriz.principal [ax][ay] = 'A';
+          matriz.principal [guarda][ay] = '-';
+        }else if (mov == 's'){
+          guarda = ax;
+          ax = ax +1;
+          matriz.principal [ax][ay] = 'A';
+          matriz.principal [guarda][ay] = '-';
+        }else if (mov == 'a'){
+          guarda = ay;
+          ay = ay -1;
+          matriz.principal [ax][ay] = 'A';
+          matriz.principal [ax][guarda] = '-';
+        }else if (mov == 'd'){
+          guarda = ay;
+          ay = ay +1;
+          matriz.principal [ax][ay] = 'A';
+          matriz.principal [ax][guarda] = '-';
+        }else {
+          printf("comando nao encontrado");
+        }
+          int movm = rand()%4; 
+        switch(movm){
+        case 1:    // monstro se move p cima
+          mx = mx -1;
+          break;
+        case 2:    // monstro se move p direita
+          my = my +1;
+          break;
+        case 3:    //monstro se move para esquerda
+          my = my -1;
+          break;
+        case 4:    // monstro se move para baixo
+          mx = mx +1;
+          break; 
+        } 
+        if (ay==my && mx == ax + 1){
+                printf ("\nO monstro esta embaixo de voce");
+        } else if (ay==my && mx == ax - 1){
+                printf ("\nO monstro esta em cima de voce");
+        } else if (ax==mx && mx == ax + 1){
+                printf ("\nO monstro esta do seu lado direito");
+        } else if (ax==mx &&mx == ax - 1){
+                printf ("\nO monstro esta do seu lado esquerdo");
+        } else if (ax == mx && ay == my){
+                printf("\nO monstro te encontrou \n V O C E   P E R D E U !!! ");
+        } else {
+                printf("\nO monstro esta atras de voce...");
+        } 
+        if (p1x == ax && p1y == ay){
+           printf("voce caiu no poco\n");
+        }else if (p2x == ax && p2y == ay){
+           printf("voce caiu no poco\n");
+        }else if (p3x == ax && p3y == ay){
+           printf("voce caiu no poco\n");
+        }else if (p1x == ax + 1 && p1y == ay){
+            printf("voce esta acima do poco\n");
+        } else if (p1x == ax -1 && p1y == ay){
+             printf("voce esta abaixo do poco\n");
+        } else if (p1x == ax && p1y == ay +1){
+            printf("o poco esta a sua direita\n");
+        } else if (p1x == ax && p1y == ay -1){
+            printf("o poco esta a sua esquerda\n");
+        } else if (p2x == ax + 1 && p2y == ay){
+            printf("voce esta acima do poco\n");
+        } else if (p2x == ax -1 && p2y == ay){
+             printf("voce esta abaixo do poco\n");
+        } else if (p2x == ax && p2y == ay +1){
+            printf("o poco esta a sua direita\n");
+        } else if (p2x == ax && p2y == ay +1){
+            printf("o poco esta a sua esquerda\n");
+        }else if (p3x == ax + 1 && p3y == ay){
+            printf("voce esta acima do poco\n");
+        } else if (p3x == ax -1 && p3y == ay){
+             printf("voce esta abaixo do poco\n");
+        } else if (p3x == ax && p3y == ay +1){
+            printf("o poco esta a sua direita\n");
+        } else if (p3x == ax && p3y == ay -1){
+            printf("o poco esta a sua esquerda\n");
+        } else {
+          printf("continue com cuidado, existem pocos para te capturar\n");
+            if (ax == ox && ay == oy){
+          printf("\nVoce encontrou o ouro \n Retorne para a saida");
+        } else {
+          printf("\nVoce ainda nao chegou ao seu destino");
+        }
+      
+      matriz.principal [ax][ay] = 'A';
+      for (i = 1; i<9; i++){
+        printf("\n");
+        for (j = 1; j< 9; j++){
+          printf (" %c ", matriz.principal[i][j]);
+        }
+      }
+      numeromovimentos++;
+      
+      printf("\ndeseja continuar?\n Se sim, digite - 1\n Se nao, digite - 2\n");
+      scanf("%d", &finalizar);
+      while (finalizar == 1){
+        // - - - JOGO SO ACABA QUANDO RETORNAR A POSICAO 1X1
+        printf("\n---------------------------------------------\n");
+        printf("\nEscolha uma direcao para andar com o agente");
+        printf("\n W  = andar para cima\n A  = andar para esquerda\n S  = andar para baixo\n D  = andar para direita \n -> ");
+      
+      scanf("%s", &mov);
+        
+      int guarda;
+        if (mov == 'w'){
+          guarda = ax;
+          ax = ax - 1;
+          matriz.principal [ax][ay] = 'A';
+          matriz.principal [guarda][ay] = '-';
+        }else if (mov == 's'){
+          guarda = ax;
+          ax = ax +1;
+          matriz.principal [ax][ay] = 'A';
+          matriz.principal [guarda][ay] = '-';
+        }else if (mov == 'a'){
+          guarda = ay;
+          ay = ay -1;
+          matriz.principal [ax][ay] = 'A';
+          matriz.principal [ax][guarda] = '-';
+        }else if (mov == 'd'){
+          guarda = ay;
+          ay = ay +1;
+          matriz.principal [ax][ay] = 'A';
+          matriz.principal [ax][guarda] = '-';
+        }else {
+          printf("comando nao encontrado");
+        }
+            int movm = rand()%4; 
+          switch(movm){
+          case 1:    // monstro se move p cima
+            mx = mx -1;
+            break;
+          case 2:    // monstro se move p direita
+            my = my +1;
+            break;
+          case 3:    //monstro se move para esquerda
+            my = my -1;
+            break;
+          case 4:    // monstro se move para baixo
+            mx = mx +1;
+            break; 
+          } 
+        if (ay==my && mx == ax + 1){
+                printf ("\nO monstro esta embaixo de voce");
+        } else if (ay==my && mx == ax - 1){
+                printf ("\nO monstro esta em cima de voce");
+        } else if (ax==mx && mx == ax + 1){
+                printf ("\nO monstro esta do seu lado direito");
+        } else if (ax==mx &&mx == ax - 1){
+                printf ("\nO monstro esta do seu lado esquerdo");
+        } else if (ax == mx && ay == my){
+                printf("\nO monstro te encontrou \n V O C E   P E R D E U !!! ");
+        } else {
+                printf("\nO monstro esta atras de voce...");
+        } 
+        if (p1x == ax && p1y == ay){
+           printf("voce caiu no poco\n");
+        }else if (p2x == ax && p2y == ay){
+           printf("voce caiu no poco\n");
+        }else if (p3x == ax && p3y == ay){
+           printf("voce caiu no poco\n");
+        }else if (p1x == ax + 1 && p1y == ay){
+            printf("voce esta acima do poco\n");
+        } else if (p1x == ax -1 && p1y == ay){
+             printf("voce esta abaixo do poco\n");
+        } else if (p1x == ax && p1y == ay +1){
+            printf("o poco esta a sua direita\n");
+        } else if (p1x == ax && p1y == ay -1){
+            printf("o poco esta a sua esquerda\n");
+        } else if (p2x == ax + 1 && p2y == ay){
+            printf("voce esta acima do poco\n");
+        } else if (p2x == ax -1 && p2y == ay){
+             printf("voce esta abaixo do poco\n");
+        } else if (p2x == ax && p2y == ay +1){
+            printf("o poco esta a sua direita\n");
+        } else if (p2x == ax && p2y == ay +1){
+            printf("o poco esta a sua esquerda\n");
+        }else if (p3x == ax + 1 && p3y == ay){
+            printf("voce esta acima do poco\n");
+        } else if (p3x == ax -1 && p3y == ay){
+             printf("voce esta abaixo do poco\n");
+        } else if (p3x == ax && p3y == ay +1){
+            printf("o poco esta a sua direita\n");
+        } else if (p3x == ax && p3y == ay -1){
+            printf("o poco esta a sua esquerda\n");
+        } else {
+          printf("continue com cuidado, existem pocos para te capturar\n");
+        if (ax == ox && ay == oy){
+            printf("\nVoce encontrou o ouro \n Retorne para a saida");
+          } else {
+            printf("\nVoce ainda nao chegou ao seu destino");
+          }
+      for (i = 1; i<9; i++){
+        printf("\n");
+        for (j = 1; j< 9; j++){
+          printf (" %c ", matriz.principal[i][j]);
+          }
+        } 
+        numeromovimentos++;
+        
+        printf("deseja continuar?\n Se sim, digite - 1\n Se nao, digite - 2\n");
+        scanf("%d", &finalizar);
+      }
+      file = fopen("ranking.txt","w");
+      if(file == NULL){
+        perror("ranking.txt");
+        return 1;
+      }
+      fprintf (file,"%s -> %d", nomejogador, numeromovimentos);
+      fclose(file);
+    break; 
+      
+     // - - - DEBUG - - -
+     // - - - posicionar M, A, O, P
+    case 2: 
+      printf(" -> Monstro esta representado como a letra M\n");
+      printf(" -> Agente esta representado com a letra A\n");
+      printf(" -> Ouro esta representado como a letra O\n");
+      printf(" -> Poco/os esta representado como a letra P\n");
+      
+      for( i=0; i<8; i++){
+        printf("\n");
+        for (j = 0; j < 8; j++){
+          printf(" %c ", matriz.debug[i][j]); 
+        }
+      }
+    break;
+    
+    // - - - RANKING - - -
+    case 3 :   
+      file = fopen("ranking.txt","r");
+      if(file == NULL){
+        perror("ranking.txt");
+        return 1;
+      }
+      while(fscanf(file, "%c", &c)!= EOF){
+        printf("%c", c);
+      }
+      fclose(file);
+    break;
+    
+    // - - - FIM - - - 
+    case 4:
+      printf ("\n VOCE ENCERROU O JOGO \n"); 
+    break;
+  
+    default :
+      printf ("comando nao encontrado");
+    break;
+  }}
+  return 0;
+}}
